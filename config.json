@@ -1,14 +1,14 @@
 {
-  "PAGE_ACCESS_TOKEN": "",
+  "PAGE_ACCESS_TOKEN": "‎674647772408987",
   "VERIFY_TOKEN": "WEBHOOK",
   "ADMINS": [
-    ""
+    "61578153767211"
   ],
   "BOTNAME": "BOTNAME",
   "PREFIX": "/",
   "THEME_SETUP": {
     "THEME": "Fiery",
-    "ADMIN": "Your Name",
+    "ADMIN": "masachika kuze",
     "TITLE": "PAGEBOT",
     "HTML": [
       "#CE2F16",
