@@ -1,10 +1,10 @@
 {
-  "PAGE_ACCESS_TOKEN": "",
+  "PAGE_ACCESS_TOKEN": "‎674647772408987",
   "VERIFY_TOKEN": "WEBHOOK",
   "ADMINS": [
     ""
   ],
-  "BOTNAME": "BOTNAME",
+  "BOTNAME": "Camille Bot",
   "PREFIX": "/",
   "THEME_SETUP": {
     "THEME": "Fiery",
