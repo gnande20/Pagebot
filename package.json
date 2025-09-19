@@ -1,9 +1,10 @@
 {
   "name": "Pagebot",
   "version": "1.0.5",
-  "description": "A simple starting repl for Facebook Business Pagebot Developers",
+  "description": "A simple starting repl for Facebook Business Pagebot Demo",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
