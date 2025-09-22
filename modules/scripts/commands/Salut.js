@@ -1,92 +1,84 @@
 const axios = require('axios');
 
-// URL et clé API de ton backend IA
-const API_URL = 'https://messie-flash-api-ia.vercel.app/chat?prompt=';
-const API_KEY = 'messie12356osango2025jinWoo';
+const API_KEY = "AIzaSyBQeZVi4QdrnGKPEfXXx1tdIqlMM8iqvZw";
+const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`;
 
-/**
- * Appel API IA
- */
 async function getAIResponse(input) {
     try {
-        const response = await axios.get(
-            `${API_URL}${encodeURIComponent(input)}&apiKey=${API_KEY}`,
-            { timeout: 10000, headers: { 'Accept': 'application/json' } }
-        );
-
-        if (response.data?.parts?.[0]?.response) return response.data.parts[0].response;
-        if (response.data?.response) return response.data.response;
-
-        return "Désolé, je n’ai pas compris la réponse de l’IA.";
-    } catch (err) {
-        console.error("Erreur API IA:", err.response?.status, err.message);
-        return "⚠️ Erreur de connexion au serveur IA.";
+        const response = await axios.post(API_URL, {
+            contents: [{ parts: [{ text: input }] }]
+        }, {
+            headers: { "Content-Type": "application/json" }
+        });
+        return response.data?.candidates?.[0]?.content?.parts?.[0]?.text 
+               || "⚠️ Les abysses refusent de répondre...";
+    } catch (error) {
+        console.error("Erreur API:", error);
+        return "🌑 Le pacte avec les ombres a échoué...";
     }
 }
 
-/**
- * Transformer texte en gras (Unicode)
- */
-function toBoldFont(text) {
-    const offsetUpper = 0x1D400 - 65;
-    const offsetLower = 0x1D41A - 97;
-
-    return text.split('').map(char => {
-        const code = char.charCodeAt(0);
-        if (code >= 65 && code <= 90) return String.fromCodePoint(code + offsetUpper);
-        if (code >= 97 && code <= 122) return String.fromCodePoint(code + offsetLower);
-        return char;
-    }).join('');
-}
-
-/**
- * Mise en forme réponse
- */
 function formatResponse(content) {
-    return toBoldFont(content);
+    return `\n
+☠️─────────『 𝐀𝐈 𝐁𝐎𝐓 𝐒𝐎𝐌𝐁𝐑𝐄 』─────────☠️
+
+█▓▒­░⡷⠂ 𝑳𝒆𝒔 𝒕𝒆́𝒏𝒆̀𝒃𝒓𝒆𝒔 𝒔'𝒂𝒏𝒊𝒎𝒆𝒏𝒕 ⠐⢾░▒▓█
+
+「 ${content} 」
+
+⚡ Mots maudits : 
+› Abysse | Chaos | Néant | Damnation | Sang | Invocation | Démon | Crâne | Ombre
+
+🌑 𝑳𝒂 𝒇𝒐𝒓𝒄𝒆 𝒅𝒖 𝒗𝒊𝒅𝒆 𝒂 𝒔𝒖𝒇𝒇𝒍𝒆́ 𝒄𝒆𝒕𝒕𝒆 𝒗𝒆́𝒓𝒊𝒕𝒆́...
+`;
 }
 
-module.exports = {
-    config: {
+module.exports = { 
+    config: { 
         name: 'ai',
-        author: 'Messie Osango',
-        version: '3.0',
+        author: 'octavio wina',
         role: 0,
-        category: 'Chatbot',
-        shortDescription: 'Chatbot IA',
-        longDescription: 'Un chatbot IA qui répond automatiquement à tous les messages.',
-        keywords: ['chatbot', 'ai']
+        category: 'ai',
+        shortDescription: 'Invocation obscure IA BOT SOMBRE',
     },
-
-    /**
-     * Commande manuelle (au besoin)
-     */
-    onStart: async function({ api, event, args }) {
+    onStart: async function ({ api, event, args }) {
         const input = args.join(' ').trim();
-        if (!input) return api.sendMessage(formatResponse("Salut 👋, je suis ton chatbot IA. Pose-moi une question !"), event.threadID);
+        if (!input) {
+            return api.sendMessage(
+                formatResponse("🌒 Invoque-moi... Tes mots ouvriront le portail du néant."),
+                event.threadID
+            );
+        }
 
         try {
-            const res = await getAIResponse(input);
-            api.sendMessage(formatResponse(res), event.threadID);
-        } catch (err) {
-            console.error("Erreur traitement onStart:", err);
-            api.sendMessage(formatResponse("⚠️ Erreur de traitement."), event.threadID);
+            const aiResponse = await getAIResponse(input);
+            api.sendMessage(
+                formatResponse(aiResponse),
+                event.threadID,
+                event.messageID
+            );
+        } catch (error) {
+            api.sendMessage(
+                formatResponse("🔥 Le rituel a échoué, les démons se sont dissipés..."),
+                event.threadID
+            );
         }
     },
-
-    /**
-     * Mode chatbot auto : répond à chaque message
-     */
-    onChat: async function({ event, message }) {
-        const body = event.body?.trim();
-        if (!body) return; // ignorer si vide (par ex. images, stickers)
+    onChat: async function ({ event, message }) {
+        if (!event.body.toLowerCase().startsWith("ai")) return;
+        
+        const input = event.body.slice(2).trim();
+        if (!input) {
+            return message.reply(
+                formatResponse("💀 Je suis 𝐀𝐈 𝐁𝐎𝐓 𝐒𝐎𝐌𝐁𝐑𝐄... forgé dans le CHAOS par Octavio Wina. Que cherches-tu dans les abîmes ?")
+            );
+        }
 
         try {
-            const res = await getAIResponse(body);
-            message.reply(formatResponse(res));
-        } catch (err) {
-            console.error("Erreur traitement onChat:", err);
-            message.reply(formatResponse("⚠️ Je rencontre un problème pour répondre."));
+            const aiResponse = await getAIResponse(input);
+            message.reply(formatResponse(aiResponse));
+        } catch (error) {
+            message.reply(formatResponse("⚔️ Une erreur obscure a corrompu ta demande..."));
         }
     }
 };
